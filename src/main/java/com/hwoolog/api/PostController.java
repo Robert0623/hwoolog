@@ -1,14 +1,10 @@
-package com.hwoolog.controller;
+package com.hwoolog.api.controller;
 
-import com.hwoolog.controller.request.PostCreate;
+import com.hwoolog.api.request.PostCreate;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -28,7 +24,9 @@ public class PostController {
     // 글 등록
     // POST Method
     @PostMapping("/posts")
-    public Map<String, String> posts(@RequestBody @Valid PostCreate params, BindingResult result) throws Exception {
+    public Map<String, String> posts(@RequestBody @Valid PostCreate params
+                                     // , BindingResult result
+    ) throws Exception {
         // 데이터를 검증하는 이유
 
         // 1. client 개발자가 깜박할 수 있다. 시룻로 값을 안보낼 수 있다.
@@ -52,16 +50,30 @@ public class PostController {
 //        }
 
         // {"title": "타이틀 값이 없습니다"}
-        if (result.hasErrors()) {
-            List<FieldError> fieldErrors = result.getFieldErrors();
-            FieldError firstFieldError = fieldErrors.get(0);
-            String fieldName = firstFieldError.getField(); // title
-            String errorMessage = firstFieldError.getDefaultMessage(); // 에러 메시지
-
-            Map<String, String> error = new HashMap<>();
-            error.put(fieldName, errorMessage);
-            return error;
-        }
+        // 1. 매번 매서드마다 값을 검증해야한다.
+        //      > 개발자가 까먹을 수 있다.
+        //      > 검증 부분에서 버그가 발생할 여지가 높다.
+        //      > 지겹다. (간지가 안난다.)
+        // 2. 응답값에 HashMap -> 응답 클래스를 만들어주는 것이 좋다.
+        // 3. 여러개의 예외처리 힘듬
+        // 4. 세 번 이상의 반복적인 작업은 피해야한다.
+            // - 코드 && 개발에 관한 모든 것
+                // -> 자동화 고려
+//        if (result.hasErrors()) {
+//            List<FieldError> fieldErrors = result.getFieldErrors();
+//            FieldError firstFieldError = fieldErrors.get(0);
+//            String fieldName = firstFieldError.getField(); // title
+//            String errorMessage = firstFieldError.getDefaultMessage(); // 에러 메시지
+//
+//            FieldError secondFieldError = fieldErrors.get(1);
+//            String secondFieldName = secondFieldError.getField();
+//            String secondErrorMessage = secondFieldError.getDefaultMessage();
+//
+//            Map<String, String> error = new HashMap<>();
+//            error.put(fieldName, errorMessage);
+//            error.put(secondFieldName, secondErrorMessage);
+//            return error;
+//        }
         log.info("params={}", params.toString());
         return Map.of();
     }
