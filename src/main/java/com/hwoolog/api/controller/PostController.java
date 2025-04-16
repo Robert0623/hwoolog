@@ -1,7 +1,9 @@
 package com.hwoolog.api.controller;
 
 import com.hwoolog.api.request.PostCreate;
+import com.hwoolog.api.service.PostService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +11,10 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class PostController {
+
+    private final PostService postService;
 
     // SSR -> jsp, thymeleaf, mustache, freemarker
             // -> html rendering
@@ -24,7 +29,7 @@ public class PostController {
     // 글 등록
     // POST Method
     @PostMapping("/posts")
-    public Map<String, String> posts(@RequestBody @Valid PostCreate params
+    public Map<String, String> posts(@RequestBody @Valid PostCreate request
                                      // , BindingResult result
     ) throws Exception {
         // 데이터를 검증하는 이유
@@ -74,7 +79,10 @@ public class PostController {
 //            error.put(secondFieldName, secondErrorMessage);
 //            return error;
 //        }
-        log.info("params={}", params.toString());
+        log.info("request={}", request.toString());
+        postService.write(request);
+
         return Map.of();
     }
+
 }
