@@ -2,6 +2,7 @@ package com.hwoolog.api.controller;
 
 import com.hwoolog.api.domain.Post;
 import com.hwoolog.api.request.PostCreate;
+import com.hwoolog.api.response.PostResponse;
 import com.hwoolog.api.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -99,10 +100,12 @@ public class PostController {
      * /posts/{postId} -> 글 한개만 조회
      */
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id) {
-        Post post = postService.get(id);
+    public PostResponse get(@PathVariable(name = "postId") Long id) {
+        // Request 클래스 -> 요청과 validation 정책
+        // Response 클래스 -> 서비스 정책
 
-        return post;
+        PostResponse response = postService.get(id);
+        return response;
     }
 
 }

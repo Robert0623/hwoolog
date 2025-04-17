@@ -25,4 +25,10 @@ public class Post {
         this.title = title;
         this.content = content;
     }
+
+    public String getTitle() {
+        // 서비스의 정책을 절대 넣지마세요!! --> 응답 클래스를 분리하세요 (서비스 정책에 맞는)
+        // return this.title.substring(0, 10);
+        return title;
+    }
 }
