@@ -32,7 +32,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
         // 응답을 위한 클래스를 분리 (서비스 정책 적용(title 10글자 이하))
-        PostResponse response = PostResponse.builder()
+        return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -42,8 +42,6 @@ public class PostService {
          * PostController -> WebPostService (response 호출 담당) -> Repository
          *                   PostService (다른 서비스와 통신)
          */
-
-        return response;
     }
 
 }

@@ -1,6 +1,5 @@
 package com.hwoolog.api.controller;
 
-import com.hwoolog.api.domain.Post;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.response.PostResponse;
 import com.hwoolog.api.service.PostService;
@@ -8,8 +7,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -100,12 +97,10 @@ public class PostController {
      * /posts/{postId} -> 글 한개만 조회
      */
     @GetMapping("/posts/{postId}")
-    public PostResponse get(@PathVariable(name = "postId") Long id) {
+    public PostResponse get(@PathVariable Long postId) {
         // Request 클래스 -> 요청과 validation 정책
         // Response 클래스 -> 서비스 정책
-
-        PostResponse response = postService.get(id);
-        return response;
+        return postService.get(postId);
     }
 
 }
