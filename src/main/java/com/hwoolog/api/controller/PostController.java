@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -101,6 +103,16 @@ public class PostController {
         // Request 클래스 -> 요청과 validation 정책
         // Response 클래스 -> 서비스 정책
         return postService.get(postId);
+    }
+
+    /**
+     * 조회 API
+     * 여러개의 글을 조회
+     * /posts
+     */
+    @GetMapping("/posts")
+    public List<PostResponse> getList() {
+        return postService.getList();
     }
 
 }
