@@ -160,16 +160,20 @@ class PostControllerTest {
     @DisplayName("글 1페이지 조회")
     void test5() throws Exception {
         // given
-        List<Post> requestPosts = IntStream.range(1, 31)
+        List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder()
-                        .title("hwoo title " + i)
-                        .content("hwoo content " + i)
+                        .title("foo" + i)
+                        .content("bar" + i)
                         .build())
                 .collect(Collectors.toList());
         postRepository.saveAll(requestPosts);
 
+        System.out.println("requestPosts.size() = " + requestPosts.size());
+        System.out.println("requestPosts.get(0).getId() = " + requestPosts.get(0).getId());
+        System.out.println("requestPosts.get(requestPosts.size() - 1).getId() = " + requestPosts.get(requestPosts.size() - 1).getId());
+
         // expected (when + then)
-        mockMvc.perform(get("/posts?page=1&sort=id,desc")
+        mockMvc.perform(get("/posts")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 /**
@@ -179,10 +183,43 @@ class PostControllerTest {
                 /**
                  * [{id: ..., title: ...}, {id: ..., title: ....}]
                  */
-                .andExpect(jsonPath("$.length()", is(5)))
-                .andExpect(jsonPath("$[0].id").value(30))
-                .andExpect(jsonPath("$[0].title").value("hwoo title 30"))
-                .andExpect(jsonPath("$[0].content").value("hwoo content 30"))
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].id").value(requestPosts.get(requestPosts.size() - 1).getId()))
+                .andExpect(jsonPath("$[0].title").value("foo19"))
+                .andExpect(jsonPath("$[0].content").value("bar19"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("페이지를 0으로 요청하면 첫 페이지를 가져온다.")
+    void test6() throws Exception {
+        // given
+        List<Post> requestPosts = IntStream.range(0, 20)
+                .mapToObj(i -> Post.builder()
+                        .title("foo" + i)
+                        .content("bar" + i)
+                        .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
+        System.out.println("requestPosts.size() = " + requestPosts.size());
+        System.out.println("requestPosts.get(0).getId() = " + requestPosts.get(0).getId());
+        System.out.println("requestPosts.get(requestPosts.size() - 1).getId() = " + requestPosts.get(requestPosts.size() - 1).getId());
+
+        // expected (when + then)
+        mockMvc.perform(get("/posts?page=0&size=10")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                /**
+                 * {id: ..., title: ...}
+                 */
+
+                /**
+                 * [{id: ..., title: ...}, {id: ..., title: ....}]
+                 */
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].id").value(requestPosts.get(requestPosts.size() - 1).getId()))
+                .andExpect(jsonPath("$[0].title").value("foo19"))
+                .andExpect(jsonPath("$[0].content").value("bar19"))
                 .andDo(print());
     }
 

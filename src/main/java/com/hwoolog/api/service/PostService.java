@@ -3,10 +3,10 @@ package com.hwoolog.api.service;
 import com.hwoolog.api.domain.Post;
 import com.hwoolog.api.repository.PostRepository;
 import com.hwoolog.api.request.PostCreate;
+import com.hwoolog.api.request.PostSerch;
 import com.hwoolog.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,10 +52,10 @@ public class PostService {
     // 글이 -> 100,000,000 -> DB 글 모두 조회하는 경우 -> DB가 뻗을 수 있다.
     // DB -> 애플리케이션 서버로 전달하는 시간, 트래픽비용 등이 많이 발생할 수 있다.
 
-    public List<PostResponse> getList(Pageable pageable) {
+    public List<PostResponse> getList(PostSerch postSerch) {
         // web -> page 1 -> page 0
 //        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
-        return postRepository.findAll(pageable).stream()
+        return postRepository.getList(postSerch).stream()
 //                .map(post -> PostResponse.builder()
 //                        .id(post.getId())
 //                        .title(post.getTitle())
