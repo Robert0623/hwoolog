@@ -1,6 +1,7 @@
 package com.hwoolog.api.controller;
 
 import com.hwoolog.api.request.PostCreate;
+import com.hwoolog.api.request.PostEdit;
 import com.hwoolog.api.request.PostSerch;
 import com.hwoolog.api.response.PostResponse;
 import com.hwoolog.api.service.PostService;
@@ -114,6 +115,11 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponse> getList(@ModelAttribute PostSerch postSerch) {
         return postService.getList(postSerch);
+    }
+
+    @PatchMapping("/posts/{postId}")
+    public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
+        postService.edit(postId, request);
     }
 
 }
