@@ -6,6 +6,7 @@ import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
 import com.hwoolog.api.request.PostSerch;
 import com.hwoolog.api.response.PostResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -150,6 +151,25 @@ class PostServiceTest {
                 .orElseThrow(() -> new IllegalArgumentException("글이 존재하지 않습니다. id =" + post.getId()));
         assertEquals("foo", changedPost.getTitle());
         assertEquals("bar2", changedPost.getContent());
+    }
+
+    @Test
+    @DisplayName("글 내용 삭제")
+    void test6() {
+        // given
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+        postRepository.save(post);
+
+        Assertions.assertEquals(1, postRepository.count());
+
+        // when
+        postService.delete(post.getId());
+
+        // then
+        Assertions.assertEquals(0, postRepository.count());
     }
 
 }
