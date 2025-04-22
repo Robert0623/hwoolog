@@ -1,12 +1,12 @@
 package com.hwoolog.api.service;
 
 import com.hwoolog.api.domain.Post;
+import com.hwoolog.api.exception.PostNotFound;
 import com.hwoolog.api.repository.PostRepository;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
 import com.hwoolog.api.request.PostSerch;
 import com.hwoolog.api.response.PostResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostServiceTest {
@@ -163,13 +162,70 @@ class PostServiceTest {
                 .build();
         postRepository.save(post);
 
-        Assertions.assertEquals(1, postRepository.count());
+        assertEquals(1, postRepository.count());
 
         // when
         postService.delete(post.getId());
 
         // then
-        Assertions.assertEquals(0, postRepository.count());
+        assertEquals(0, postRepository.count());
+    }
+
+    @Test
+    @DisplayName("글 1개 조회 - 존재하지 않는 글")
+    void test7() {
+        // given
+        Post post = Post.builder()
+                .title("foo")
+                .content("boo")
+                .build();
+        postRepository.save(post);
+
+        // post.getId() // primary_id = 1
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.get(post.getId() + 1L);
+        });
+    }
+
+    @Test
+    @DisplayName("글 내용 삭제 - 존재하지 않는 글")
+    void test8() {
+        // given
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+        postRepository.save(post);
+
+        assertEquals(1, postRepository.count());
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+           postService.delete(post.getId() + 1L);
+        });
+    }
+
+    @Test
+    @DisplayName("글 내용 수정 - 존재하지 않는 글")
+    void test9() {
+        // given
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+//                .title("foo")
+                .content("bar2")
+                .build();
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.edit(post.getId() + 1L, postEdit);
+        });
     }
 
 }

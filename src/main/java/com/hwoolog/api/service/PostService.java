@@ -2,6 +2,7 @@ package com.hwoolog.api.service;
 
 import com.hwoolog.api.domain.Post;
 import com.hwoolog.api.domain.PostEditor;
+import com.hwoolog.api.exception.PostNotFound;
 import com.hwoolog.api.repository.PostRepository;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
@@ -36,7 +37,7 @@ public class PostService {
 
     public PostResponse get(Long id) {
         Post post =  postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         // 응답을 위한 클래스를 분리 (서비스 정책 적용(title 10글자 이하))
         return PostResponse.builder()
@@ -71,7 +72,7 @@ public class PostService {
     @Transactional
     public void edit(Long id, PostEdit postEdit) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
 //        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
 //
@@ -94,7 +95,7 @@ public class PostService {
 
     public void delete(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         postRepository.delete(post);
     }
