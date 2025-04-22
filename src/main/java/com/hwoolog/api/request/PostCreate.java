@@ -1,5 +1,6 @@
 package com.hwoolog.api.request;
 
+import com.hwoolog.api.exception.InvalidRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -36,5 +37,11 @@ public class PostCreate {
                 .title(title)
                 .content(content)
                 .build();
+    }
+
+    public void validate() {
+        if (title.contains("바보")) {
+            throw new InvalidRequest("title", "제목에 바보를 포함할 수 없습니다.");
+        }
     }
 }

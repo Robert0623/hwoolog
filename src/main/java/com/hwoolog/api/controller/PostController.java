@@ -93,6 +93,7 @@ public class PostController {
         // return postService.write(request);
         // Long postId = postService.write(request);
         // return Map.of("postId", postId);
+        request.validate();
         postService.write(request);
     }
 
