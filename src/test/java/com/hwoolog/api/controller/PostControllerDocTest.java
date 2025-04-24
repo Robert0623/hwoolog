@@ -89,6 +89,6 @@ public class PostControllerDocTest {
                                         .attributes(key("constraint").value("제목은 필수값입니다.")),
                                 fieldWithPath("content").description("내용").optional()
                         )
-                ));
+                )); 
     }
 }
