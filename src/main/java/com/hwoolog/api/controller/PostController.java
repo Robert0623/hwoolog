@@ -82,7 +82,6 @@ public class PostController {
 //            error.put(secondFieldName, secondErrorMessage);
 //            return error;
 //        }
-        log.info("request={}", request.toString());
         // Case1. 저장한 데이터 Entity -> response로 응답하기
         // Case2. 저장한 데이터의 primary_id -> response로 응답하기
         //          Client에서는 수신한 id를 글 조회 API를 통해서 글 데이터를 수신받음
