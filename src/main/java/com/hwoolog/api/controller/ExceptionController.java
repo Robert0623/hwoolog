@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.HashMap;
+
 @Slf4j
 @ControllerAdvice
 public class ExceptionController {
@@ -23,6 +25,7 @@ public class ExceptionController {
         ErrorResponse response = ErrorResponse.builder()
                 .code("400")
                 .message("잘못된 요청입니다.")
+                .validation(new HashMap<>())
                 .build();
 
         for (FieldError fieldError : e.getFieldErrors()) {
@@ -39,6 +42,7 @@ public class ExceptionController {
         ErrorResponse response = ErrorResponse.builder()
                 .code("400")
                 .message("잘못된 요청입니다.")
+                .validation(new HashMap<>())
                 .build();
 
         response.addValidation("error", e.getMessage());
