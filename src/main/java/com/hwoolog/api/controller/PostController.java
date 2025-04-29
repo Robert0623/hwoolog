@@ -127,4 +127,14 @@ public class PostController {
         postService.delete(postId);
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "hello";
+    }
+
+    @GetMapping("/foo")
+    public String foo() {
+        return "foo";
+    }
+
 }
