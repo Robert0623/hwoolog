@@ -129,9 +129,9 @@ public class PostController {
     }
 
     @GetMapping("/foo")
-    public UserSession foo(UserSession userSession) {
-        log.info(">>>{}", userSession.name);
-        return userSession;
+    public Long foo(UserSession userSession) {
+        log.info(">>>{}", userSession.id);
+        return userSession.id;
     }
 
     @GetMapping("/bar")
