@@ -44,45 +44,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 Hello World를 출력한다.")
-    void test() throws Exception {
-        // 글 제목
-        // 글 내용
-        // 사용자
-            // id
-            // user
-            // level
-
-        /***
-         * {
-         *      "title": "xxx",
-         *      "content": "xxx",
-         *      "user": {
-         *              "id": "xxx",
-         *              "name": "xxx"
-         *          }
-         * }
-         */
-        // given
-        PostCreate request = PostCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
-                .build();
-
-        String json = objectMapper.writeValueAsString(request);
-
-        // expected
-        mockMvc.perform(post("/posts")
-                        .contentType(APPLICATION_JSON)
-                        .content(json)
-                ) // 요즘 -> application/json, 이전 -> application/x-www-form-urlencoded
-                .andExpect(status().isOk())         // MockMvc -> application/json
-                .andExpect(content().string(""))
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("/posts 요청 시 title 값은 필수다.")
+    @DisplayName("글 작성 요청 시 title 값은 필수다.")
     void test2() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
@@ -105,7 +67,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청 시 DB에 값이 저장된다.")
+    @DisplayName("글 작성 요청 시 DB에 값이 저장된다.")
     void test3() throws Exception {
         // before -> @BeforeEach
 
@@ -119,10 +81,10 @@ class PostControllerTest {
 
         // when
         mockMvc.perform(post("/posts")
+                        .header("authorization", "hwoo")
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
-                // .andExpect(status().isOk())
                 .andExpect(status().isOk())
                 .andDo(print());
 
