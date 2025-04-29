@@ -1,5 +1,6 @@
 package com.hwoolog.api.controller;
 
+import com.hwoolog.api.config.UserSession;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
 import com.hwoolog.api.request.PostSerch;
@@ -127,14 +128,15 @@ public class PostController {
         postService.delete(postId);
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "hello";
+    @GetMapping("/foo")
+    public UserSession foo(UserSession userSession) {
+        log.info(">>>{}", userSession.name);
+        return userSession;
     }
 
-    @GetMapping("/foo")
-    public String foo() {
-        return "foo";
+    @GetMapping("/bar")
+    public String bar(UserSession userSession) {
+        return "인증필요";
     }
 
 }
