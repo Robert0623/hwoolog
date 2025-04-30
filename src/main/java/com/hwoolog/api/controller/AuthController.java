@@ -1,5 +1,6 @@
 package com.hwoolog.api.controller;
 
+import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.Login;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
+
+    private final UserRepository userRepository;
 
     @PostMapping("/auth/login")
     public void login(@RequestBody Login login) {
