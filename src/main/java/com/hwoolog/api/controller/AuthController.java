@@ -1,5 +1,7 @@
 package com.hwoolog.api.controller;
 
+import com.hwoolog.api.domain.User;
+import com.hwoolog.api.exception.InvalidSigninInformation;
 import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.Login;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +18,12 @@ public class AuthController {
     private final UserRepository userRepository;
 
     @PostMapping("/auth/login")
-    public void login(@RequestBody Login login) {
-        // json 아이디/비밀번호
+    public User login(@RequestBody Login login) {
         log.info(">>>login={}", login);
 
-        // DB에서 조회
+        User user = userRepository.findByEmailAndPassword(login.getEmail(), login.getPassword())
+                .orElseThrow(InvalidSigninInformation::new);
 
-
-        // 토큰을 응답
+        return user;
     }
 }

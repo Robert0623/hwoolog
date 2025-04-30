@@ -1,1 +1,1 @@
-INSERT INTO `user` (name, email, password, created_at) VALUES ('혀누', 'aaa@aaa.com', '1234', '2025-04-30 12:44:00');
+INSERT INTO `users` (name, email, password, created_at) VALUES ('혀누', 'aaa@aaa.com', '1234', '2025-04-30 12:44:00');

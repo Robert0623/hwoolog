@@ -2,13 +2,15 @@ package com.hwoolog.api.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class User {
 
     @Id
