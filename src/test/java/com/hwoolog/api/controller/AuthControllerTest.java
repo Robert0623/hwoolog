@@ -1,8 +1,13 @@
 package com.hwoolog.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hwoolog.api.domain.User;
+import com.hwoolog.api.repository.SessionRepository;
 import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.Login;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,35 +27,122 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private SessionRepository sessionRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void clean() {
+        userRepository.deleteAll();
+    }
 
     @Test
-    @DisplayName("db에서 유저 정보를 가져와서 로그인 인증")
+    @DisplayName("로그인 성공")
     void test1() throws Exception {
-        String email = "aaa@aaa.com";
-        String password = "1234";
-        String name = "혀누";
+        // given
+        final String EMAIL = "aaa@aaa.com";
+        final String PASSWORD = "1234";
+        final String NAME = "hwoo";
 
-        Login login = new Login();
-        login.setEmail(email);
-        login.setPassword(password);
+        User user = User.builder()
+                .name(NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        // scrypt, bcrypt
+
+        userRepository.save(user);
+
+        Login login = Login.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
 
         String json = objectMapper.writeValueAsString(login);
 
+        // expected
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(email))
-                .andExpect(jsonPath("$.password").value(password))
-                .andExpect(jsonPath("$.name").value(name))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그인 성공 후 세션 1개 생성")
+    @Transactional
+    void test2() throws Exception {
+        // given
+        final String EMAIL = "aaa@aaa.com";
+        final String PASSWORD = "1234";
+        final String NAME = "hwoo";
+
+        User user = User.builder()
+                .name(NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        // scrypt, bcrypt
+
+       userRepository.save(user);
+
+        Login login = Login.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        String json = objectMapper.writeValueAsString(login);
+
+        // expected
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
                 .andDo(print());
 
+        Assertions.assertEquals(1L, user.getSessions().size());
+    }
+
+    @Test
+    @DisplayName("로그인 성공 후 세션 응답")
+    void test3() throws Exception {
+        // given
+        final String EMAIL = "aaa@aaa.com";
+        final String PASSWORD = "1234";
+        final String NAME = "hwoo";
+
+        User user = User.builder()
+                .name(NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        // scrypt, bcrypt
+
+        userRepository.save(user);
+
+        Login login = Login.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        String json = objectMapper.writeValueAsString(login);
+
+        // expected
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken", Matchers.notNullValue()))
+                .andDo(print());
     }
 }
