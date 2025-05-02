@@ -1,13 +1,18 @@
 package com.hwoolog.api.config;
 
 import com.hwoolog.api.exception.Unauthorized;
+import com.hwoolog.api.repository.SessionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+@RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
+
+    private final SessionRepository sessionRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -21,8 +26,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             throw new Unauthorized();
         }
 
-        // db 사용자 확인작업
-        // ...
+        sessionRepository.findByAccessToken(accessToken);
 
         return new UserSession(1L);
     }

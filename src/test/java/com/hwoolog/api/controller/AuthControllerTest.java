@@ -1,6 +1,7 @@
 package com.hwoolog.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hwoolog.api.domain.Session;
 import com.hwoolog.api.domain.User;
 import com.hwoolog.api.repository.SessionRepository;
 import com.hwoolog.api.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -143,6 +145,32 @@ class AuthControllerTest {
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken", Matchers.notNullValue()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그인 성공 후 권한이 필요한 페이지에 접속한다. /foo")
+    void test4() throws Exception {
+        // given
+        final String EMAIL = "aaa@aaa.com";
+        final String PASSWORD = "1234";
+        final String NAME = "hwoo";
+
+        User user = User.builder()
+                .name(NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        Session session = user.addSession();
+
+        userRepository.save(user);
+
+        // expected
+        mockMvc.perform(get("/foo")
+                        .header("Authorization", session.getAccessToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
