@@ -3,6 +3,8 @@ package com.hwoolog.api.config;
 import com.hwoolog.api.domain.Session;
 import com.hwoolog.api.exception.Unauthorized;
 import com.hwoolog.api.repository.SessionRepository;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,23 +28,41 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest == null) {
-            log.error("servletRequest null");
+//        HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+//        if (servletRequest == null) {
+//            log.error("servletRequest null");
+//            throw new Unauthorized();
+//        }
+//
+//        Cookie[] cookies = servletRequest.getCookies();
+//        if (cookies == null || cookies.length == 0) {
+//            log.error("쿠키가 없음");
+//            throw new Unauthorized();
+//        }
+//
+//        String accessToken = cookies[0].getValue();
+//
+//        Session session = sessionRepository.findByAccessToken(accessToken)
+//                .orElseThrow(Unauthorized::new);
+        String jws = webRequest.getHeader("Authorization");
+        if (jws == null || "".equals(jws)) {
             throw new Unauthorized();
         }
 
-        Cookie[] cookies = servletRequest.getCookies();
-        if (cookies == null || cookies.length == 0) {
-            log.error("쿠키가 없음");
-            throw new Unauthorized();
-        }
+//        try {
+//
+//            Jwts.parser()
+//                    .verifyWith(key)
+//                    .build()
+//                    .parseSignedClaims(compactJws);
+//
+//            //OK, we can trust this JWT
+//
+//        } catch (JwtException e) {
+//            throw new Unauthorized();
+//        }
 
-        String accessToken = cookies[0].getValue();
-
-        Session session = sessionRepository.findByAccessToken(accessToken)
-                .orElseThrow(Unauthorized::new);
-
-        return new UserSession(session.getUser().getId());
+        // return new UserSession(session.getUser().getId());
+        return "";
     }
 }
