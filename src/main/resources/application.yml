@@ -32,8 +32,5 @@ spring:
     init:
       mode: always
 
-hwoo:
-  hello:
-    name: "hwoo"
-    address: "busan"
-    zip: 123456
+hwoolog:
+  jwt-key: "YzgxNzk1MzAtOTY0Zi00ZDM4LWJlNzgtZTJiNWFlNWJhZWM4"

@@ -1,15 +1,11 @@
 package com.hwoolog.api.config;
 
-import com.hwoolog.api.domain.Session;
 import com.hwoolog.api.exception.Unauthorized;
 import com.hwoolog.api.repository.SessionRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -18,16 +14,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
 @Slf4j
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
     private final SessionRepository sessionRepository;
-    private static final String KEY = "YzgxNzk1MzAtOTY0Zi00ZDM4LWJlNzgtZTJiNWFlNWJhZWM4";
     private final AppConfig appConfig;
 
     @Override
@@ -61,12 +52,10 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         // byte[] decodedKey = Base64.getDecoder().decode(KEY);
         // SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256"); // java 표준 API
 //        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
-        SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY)); // jjwt 권장 API
-        log.info(">>> hello = {}", appConfig.hello);
         try {
 
             Jws<Claims> claims = Jwts.parser()
-                    .verifyWith(secretKey)
+                    .verifyWith(appConfig.getJwtSecreKey())
                     .build()
                     .parseSignedClaims(jws);
 
