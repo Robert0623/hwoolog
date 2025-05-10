@@ -50,12 +50,14 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         // SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256"); // java 표준 API
 //        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
         try {
-            // TODO: DB에서 토큰 값 검증
 
+            // JWT 자체 서명 검증
             Jws<Claims> claims = Jwts.parser()
                     .verifyWith(appConfig.getJwtSecretKey())
                     .build()
                     .parseSignedClaims(jws);
+
+            // TODO: DB조회 --> 토큰 값 검증
 
             String userId = claims.getPayload().getSubject();
             return new UserSession(Long.parseLong(userId));

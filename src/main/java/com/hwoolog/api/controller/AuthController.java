@@ -2,6 +2,7 @@ package com.hwoolog.api.controller;
 
 import com.hwoolog.api.config.AppConfig;
 import com.hwoolog.api.request.Login;
+import com.hwoolog.api.request.Signup;
 import com.hwoolog.api.response.SessionResponse;
 import com.hwoolog.api.service.AuthService;
 import io.jsonwebtoken.Jwts;
@@ -50,5 +51,10 @@ public class AuthController {
         // TODO: DB에 토큰 저장
 
         return new SessionResponse(jws);
+    }
+
+    @PostMapping("/auth/signup")
+    public void signup(@RequestBody Signup signup) {
+        authService.signup(signup);
     }
 }

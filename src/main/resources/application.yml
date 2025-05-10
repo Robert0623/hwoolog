@@ -28,9 +28,8 @@ spring:
     defer-datasource-initialization: true
     generate-ddl: true
 
-  sql:
-    init:
-      mode: always
+#  sql:
+#    init.mode: always
 
 hwoolog:
   jwt-key: "YzgxNzk1MzAtOTY0Zi00ZDM4LWJlNzgtZTJiNWFlNWJhZWM4"
