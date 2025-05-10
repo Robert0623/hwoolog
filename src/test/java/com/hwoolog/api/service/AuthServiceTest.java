@@ -24,6 +24,9 @@ class AuthServiceTest {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @AfterEach
     void clean() {
@@ -43,8 +46,7 @@ class AuthServiceTest {
         // when
         authService.signup(signup);
 
-        PasswordEncoder encoder = new PasswordEncoder();
-        String encryptedPassword = encoder.encrypt("1234");
+        String encryptedPassword = passwordEncoder.encrypt("1234");
 
         // then
         assertEquals(1, userRepository.count());
@@ -53,7 +55,7 @@ class AuthServiceTest {
         assertEquals("hwoo", user.getName());
         assertEquals("aaa@aaa.com", user.getEmail());
         assertNotNull(user.getPassword());
-        assertTrue(encoder.matches("1234", encryptedPassword));
+        assertTrue(passwordEncoder.matches("1234", encryptedPassword));
     }
 
     @Test
@@ -82,8 +84,7 @@ class AuthServiceTest {
     @DisplayName("로그인 성공")
     void test3() {
         // given
-        PasswordEncoder encoder = new PasswordEncoder();
-        String encryptedPassword = encoder.encrypt("1234");
+        String encryptedPassword = passwordEncoder.encrypt("1234");
 
         User user = User.builder()
                 .name("hwoo")
@@ -109,8 +110,7 @@ class AuthServiceTest {
     @DisplayName("비밀번호 틀림")
     void test4() {
         // given
-        PasswordEncoder encoder = new PasswordEncoder();
-        String encryptedPassword = encoder.encrypt("1234");
+        String encryptedPassword = passwordEncoder.encrypt("1234");
 
         User user = User.builder()
                 .name("hwoo")

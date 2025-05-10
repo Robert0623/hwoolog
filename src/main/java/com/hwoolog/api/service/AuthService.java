@@ -18,14 +18,14 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Long signin(Login request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(InvalidSigninInformation::new);
 
-        PasswordEncoder encoder = new PasswordEncoder();
-        boolean matches = encoder.matches(request.getPassword(), user.getPassword());
+        boolean matches = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!matches) {
             throw new InvalidSigninInformation();
         }
@@ -42,8 +42,7 @@ public class AuthService {
         }
 
         // password에 SCrypt 적용
-        PasswordEncoder encoder = new PasswordEncoder();
-        String encryptedPassword = encoder.encrypt(signup.getPassword());
+        String encryptedPassword = passwordEncoder.encrypt(signup.getPassword());
 
         User user = User.builder()
                 .name(signup.getName())
