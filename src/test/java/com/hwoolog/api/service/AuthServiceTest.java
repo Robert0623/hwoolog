@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AuthServiceTest {
@@ -47,7 +46,8 @@ class AuthServiceTest {
         User user = userRepository.findAll().iterator().next();
         assertEquals("hwoo", user.getName());
         assertEquals("aaa@aaa.com", user.getEmail());
-        assertEquals("1234", user.getPassword());
+        assertNotNull(user.getPassword());
+        assertNotEquals("1234", user.getPassword());
     }
 
     @Test
