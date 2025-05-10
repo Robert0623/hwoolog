@@ -1,5 +1,6 @@
 package com.hwoolog.api.service;
 
+import com.hwoolog.api.crypto.PasswordEncoder;
 import com.hwoolog.api.domain.User;
 import com.hwoolog.api.exception.AlreadyExistsEmailException;
 import com.hwoolog.api.exception.InvalidSigninInformation;
@@ -7,7 +8,6 @@ import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.Login;
 import com.hwoolog.api.request.Signup;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +21,14 @@ public class AuthService {
 
     @Transactional
     public Long signin(Login request) {
-        User user = userRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(InvalidSigninInformation::new);
+
+        PasswordEncoder encoder = new PasswordEncoder();
+        boolean matches = encoder.matches(request.getPassword(), user.getPassword());
+        if (!matches) {
+            throw new InvalidSigninInformation();
+        }
 
         return user.getId();
     }
@@ -36,9 +42,8 @@ public class AuthService {
         }
 
         // password에 SCrypt 적용
-        SCryptPasswordEncoder encoder = new SCryptPasswordEncoder(16, 8, 1, 32, 16);
-
-        String encryptedPassword = encoder.encode(signup.getPassword());
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptedPassword = encoder.encrypt(signup.getPassword());
 
         User user = User.builder()
                 .name(signup.getName())

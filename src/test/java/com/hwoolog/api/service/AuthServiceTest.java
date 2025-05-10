@@ -1,8 +1,11 @@
 package com.hwoolog.api.service;
 
+import com.hwoolog.api.crypto.PasswordEncoder;
 import com.hwoolog.api.domain.User;
 import com.hwoolog.api.exception.AlreadyExistsEmailException;
+import com.hwoolog.api.exception.InvalidSigninInformation;
 import com.hwoolog.api.repository.UserRepository;
+import com.hwoolog.api.request.Login;
 import com.hwoolog.api.request.Signup;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +43,9 @@ class AuthServiceTest {
         // when
         authService.signup(signup);
 
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptedPassword = encoder.encrypt("1234");
+
         // then
         assertEquals(1, userRepository.count());
 
@@ -47,7 +53,7 @@ class AuthServiceTest {
         assertEquals("hwoo", user.getName());
         assertEquals("aaa@aaa.com", user.getEmail());
         assertNotNull(user.getPassword());
-        assertNotEquals("1234", user.getPassword());
+        assertTrue(encoder.matches("1234", encryptedPassword));
     }
 
     @Test
@@ -70,5 +76,56 @@ class AuthServiceTest {
 
         // expected
         assertThrows(AlreadyExistsEmailException.class, () -> authService.signup(signup));
+    }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void test3() {
+        // given
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptedPassword = encoder.encrypt("1234");
+
+        User user = User.builder()
+                .name("hwoo")
+                .email("aaa@aaa.com")
+                .password(encryptedPassword)
+                .build();
+
+        userRepository.save(user);
+
+        Login login = Login.builder()
+                .email("aaa@aaa.com")
+                .password("1234")
+                .build();
+
+        // when
+        Long userId = authService.signin(login);
+
+        // then
+        assertNotNull(userId);
+    }
+
+    @Test
+    @DisplayName("비밀번호 틀림")
+    void test4() {
+        // given
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptedPassword = encoder.encrypt("1234");
+
+        User user = User.builder()
+                .name("hwoo")
+                .email("aaa@aaa.com")
+                .password(encryptedPassword)
+                .build();
+
+        userRepository.save(user);
+
+        Login login = Login.builder()
+                .email("aaa@aaa.com")
+                .password("9999")
+                .build();
+
+        // expected
+        assertThrows(InvalidSigninInformation.class, () -> authService.signin(login));
     }
 }
