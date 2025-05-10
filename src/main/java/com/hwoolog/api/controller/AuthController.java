@@ -24,7 +24,7 @@ import java.util.Base64;
 public class AuthController {
 
     private final AuthService authService;
-    private final String KEY = "c8179530-964f-4d38-be78-e2b5ae5baec8";
+    private final String KEY = "YzgxNzk1MzAtOTY0Zi00ZDM4LWJlNzgtZTJiNWFlNWJhZWM4";
 
 
     @PostMapping("/auth/login")
@@ -42,8 +42,8 @@ public class AuthController {
 //        return ResponseEntity.ok()
 //                .header(HttpHeaders.SET_COOKIE, cookie.toString())
 //                .build();
-        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
-        SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(base64Key));
+//        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
+        SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
 
         String jws = Jwts.builder().subject(String.valueOf(userId)).signWith(secretKey).compact();
 

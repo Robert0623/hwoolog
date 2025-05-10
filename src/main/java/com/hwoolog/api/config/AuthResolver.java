@@ -27,7 +27,8 @@ import java.util.Base64;
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
     private final SessionRepository sessionRepository;
-    private static final String KEY = "c8179530-964f-4d38-be78-e2b5ae5baec8";
+    private static final String KEY = "YzgxNzk1MzAtOTY0Zi00ZDM4LWJlNzgtZTJiNWFlNWJhZWM4";
+    private final AppConfig appConfig;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -59,9 +60,9 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
         // byte[] decodedKey = Base64.getDecoder().decode(KEY);
         // SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256"); // java 표준 API
-        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
-        SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(base64Key)); // jjwt 권장 API
-
+//        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
+        SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY)); // jjwt 권장 API
+        log.info(">>> hello = {}", appConfig.hello);
         try {
 
             Jws<Claims> claims = Jwts.parser()
