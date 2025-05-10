@@ -2,10 +2,7 @@ package com.hwoolog.api.config;
 
 import com.hwoolog.api.exception.Unauthorized;
 import com.hwoolog.api.repository.SessionRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -53,14 +50,21 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         // SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256"); // java 표준 API
 //        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
         try {
+            // TODO: DB에서 토큰 값 검증
 
             Jws<Claims> claims = Jwts.parser()
-                    .verifyWith(appConfig.getJwtSecreKey())
+                    .verifyWith(appConfig.getJwtSecretKey())
                     .build()
                     .parseSignedClaims(jws);
 
             String userId = claims.getPayload().getSubject();
             return new UserSession(Long.parseLong(userId));
+        } catch (ExpiredJwtException e) {
+            log.info("토큰 만료됨: " + e.getMessage());
+            throw new Unauthorized();
+        } catch (PrematureJwtException e) {
+            log.info("토큰 시작 시간 이전: " + e.getMessage());
+            throw new Unauthorized();
         } catch (JwtException e) {
             throw new Unauthorized();
         }

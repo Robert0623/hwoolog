@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Slf4j
@@ -41,8 +43,11 @@ public class AuthController {
         String jws = Jwts.builder()
                 .subject(String.valueOf(userId))
                 .issuedAt(new Date())
-                .signWith(appConfig.getJwtSecreKey())
+                .expiration(Date.from(Instant.now().plus(7, ChronoUnit.DAYS)))
+                .signWith(appConfig.getJwtSecretKey())
                 .compact();
+        
+        // TODO: DB에 토큰 저장
 
         return new SessionResponse(jws);
     }
