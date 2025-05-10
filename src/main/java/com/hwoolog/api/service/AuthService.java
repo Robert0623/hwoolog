@@ -16,10 +16,10 @@ public class AuthService {
     private final UserRepository userRepository;
 
     @Transactional
-    public String signin(Login request) {
+    public Long signin(Login request) {
         User user = userRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
                 .orElseThrow(InvalidSigninInformation::new);
 
-        return user.addSession().getAccessToken();
+        return user.getId();
     }
 }

@@ -3,8 +3,11 @@ package com.hwoolog.api.config;
 import com.hwoolog.api.domain.Session;
 import com.hwoolog.api.exception.Unauthorized;
 import com.hwoolog.api.repository.SessionRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +18,16 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 @Slf4j
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
     private final SessionRepository sessionRepository;
+    private static final String KEY = "c8179530-964f-4d38-be78-e2b5ae5baec8";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -49,20 +57,22 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             throw new Unauthorized();
         }
 
-//        try {
-//
-//            Jwts.parser()
-//                    .verifyWith(key)
-//                    .build()
-//                    .parseSignedClaims(compactJws);
-//
-//            //OK, we can trust this JWT
-//
-//        } catch (JwtException e) {
-//            throw new Unauthorized();
-//        }
+        // byte[] decodedKey = Base64.getDecoder().decode(KEY);
+        // SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256"); // java 표준 API
+        String base64Key = Base64.getEncoder().encodeToString(KEY.getBytes(StandardCharsets.UTF_8));
+        SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(base64Key)); // jjwt 권장 API
 
-        // return new UserSession(session.getUser().getId());
-        return "";
+        try {
+
+            Jws<Claims> claims = Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(jws);
+
+            String userId = claims.getPayload().getSubject();
+            return new UserSession(Long.parseLong(userId));
+        } catch (JwtException e) {
+            throw new Unauthorized();
+        }
     }
 }
