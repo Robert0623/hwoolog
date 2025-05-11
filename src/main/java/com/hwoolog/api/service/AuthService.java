@@ -1,11 +1,11 @@
 package com.hwoolog.api.service;
 
-import com.hwoolog.api.crypto.CustomPasswordEncoder;
 import com.hwoolog.api.domain.User;
 import com.hwoolog.api.exception.AlreadyExistsEmailException;
 import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.Signup;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final CustomPasswordEncoder customPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public void signup(Signup signup) {
         // email 중복 체크
@@ -26,7 +26,7 @@ public class AuthService {
         }
 
         // password에 SCrypt 적용
-        String encryptedPassword = customPasswordEncoder.encrypt(signup.getPassword());
+        String encryptedPassword = passwordEncoder.encode(signup.getPassword());
 
         User user = User.builder()
                 .name(signup.getName())

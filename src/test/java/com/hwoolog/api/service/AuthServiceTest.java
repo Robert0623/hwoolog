@@ -1,6 +1,5 @@
 package com.hwoolog.api.service;
 
-import com.hwoolog.api.crypto.CustomPasswordEncoder;
 import com.hwoolog.api.domain.User;
 import com.hwoolog.api.exception.AlreadyExistsEmailException;
 import com.hwoolog.api.repository.UserRepository;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +23,7 @@ class AuthServiceTest {
     private AuthService authService;
 
     @Autowired
-    private CustomPasswordEncoder customPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
 
 
     @AfterEach
@@ -44,7 +44,7 @@ class AuthServiceTest {
         // when
         authService.signup(signup);
 
-        String encryptedPassword = customPasswordEncoder.encrypt("1234");
+        String encryptedPassword = passwordEncoder.encode("1234");
 
         // then
         assertEquals(1, userRepository.count());
@@ -53,7 +53,7 @@ class AuthServiceTest {
         assertEquals("hwoo", user.getName());
         assertEquals("aaa@aaa.com", user.getEmail());
         assertNotNull(user.getPassword());
-        assertTrue(customPasswordEncoder.matches("1234", encryptedPassword));
+        assertTrue(passwordEncoder.matches("1234", encryptedPassword));
     }
 
     @Test

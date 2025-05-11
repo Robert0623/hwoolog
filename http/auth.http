@@ -1,9 +1,19 @@
+### 회원가입
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "name": "hwoo",
+  "email": "aaa@aaa.com",
+  "password": "1234"
+}
+
 ### 로그인
 
 POST http://localhost:8080/auth/login
 Content-Type: application/x-www-form-urlencoded
 
-username=hwoo&password=1234&remember=1
+username=aaa@aaa.com&password=1234&remember=1
 
 ### 메인 페이지
 
