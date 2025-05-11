@@ -1,6 +1,6 @@
 package com.hwoolog.api.service;
 
-import com.hwoolog.api.crypto.PasswordEncoder;
+import com.hwoolog.api.crypto.CustomPasswordEncoder;
 import com.hwoolog.api.domain.User;
 import com.hwoolog.api.exception.AlreadyExistsEmailException;
 import com.hwoolog.api.repository.UserRepository;
@@ -23,7 +23,7 @@ class AuthServiceTest {
     private AuthService authService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private CustomPasswordEncoder customPasswordEncoder;
 
 
     @AfterEach
@@ -44,7 +44,7 @@ class AuthServiceTest {
         // when
         authService.signup(signup);
 
-        String encryptedPassword = passwordEncoder.encrypt("1234");
+        String encryptedPassword = customPasswordEncoder.encrypt("1234");
 
         // then
         assertEquals(1, userRepository.count());
@@ -53,7 +53,7 @@ class AuthServiceTest {
         assertEquals("hwoo", user.getName());
         assertEquals("aaa@aaa.com", user.getEmail());
         assertNotNull(user.getPassword());
-        assertTrue(passwordEncoder.matches("1234", encryptedPassword));
+        assertTrue(customPasswordEncoder.matches("1234", encryptedPassword));
     }
 
     @Test
