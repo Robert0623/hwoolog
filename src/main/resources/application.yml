@@ -11,6 +11,7 @@ spring:
         default-page-size: 5
 
   datasource:
+    #url: jdbc:h2:mem:hwoolog:NON_KEYWORDS=USER
     url: jdbc:h2:mem:hwoolog
     username: sa
     password:
