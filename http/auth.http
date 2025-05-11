@@ -18,14 +18,3 @@ Content-Type: application/json
   "email": "aaa@aaa.com",
   "password": "1234"
 }
-
-### 사용자 페이지
-GET http://localhost:8080/user
-
-### 관리자 페이지
-GET http://localhost:8080/admin
-
-
-### 메인 페이지
-
-GET http://localhost:8080

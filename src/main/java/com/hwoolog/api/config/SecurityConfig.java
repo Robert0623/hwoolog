@@ -5,6 +5,7 @@ import com.hwoolog.api.config.filter.EmailPasswordAuthFilter;
 import com.hwoolog.api.config.handler.Http401Handler;
 import com.hwoolog.api.config.handler.Http403Handler;
 import com.hwoolog.api.config.handler.LoginFailHandler;
+import com.hwoolog.api.config.handler.LoginSuccessHandler;
 import com.hwoolog.api.domain.User;
 import com.hwoolog.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -51,15 +51,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/signup").permitAll()
+//                        .requestMatchers("/auth/login").permitAll()
+//                        .requestMatchers("/auth/signup").permitAll()
 //                        .requestMatchers("/user")
 //                        .hasRole("USER")
                         // .hasAnyRole("USER", "ADMIN")
 //                        .requestMatchers("/admin")
 //                        .hasRole("ADMIN")
                         // .access(new WebExpressionAuthorizationManager("hasRole('ADMIN') AND hasAuthority('WRITE')"))
-                        .anyRequest().authenticated())
+//                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
 //                .formLogin(form -> form
 //                        .loginPage("/auth/login")
 //                        .loginProcessingUrl("/auth/login")
@@ -83,7 +84,7 @@ public class SecurityConfig {
     public EmailPasswordAuthFilter emailPasswordAuthFilter() {
         EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
         filter.setAuthenticationManager(authenticationManager());
-        filter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
+        filter.setAuthenticationSuccessHandler(new LoginSuccessHandler(objectMapper));
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
         filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
 

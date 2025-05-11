@@ -14,7 +14,7 @@ public class UserPrincipal extends User {
     public UserPrincipal(com.hwoolog.api.domain.User user) {
         super(user.getEmail(), user.getPassword(),
                 List.of(
-                        new SimpleGrantedAuthority("ROLE_USER")
+                        new SimpleGrantedAuthority("ROLE_ADMIN")
                         // , new SimpleGrantedAuthority("WRITE")
                 ));
         this.userId = user.getId();
