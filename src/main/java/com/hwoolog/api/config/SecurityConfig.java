@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -32,6 +33,7 @@ import org.springframework.session.security.web.authentication.SpringSessionReme
 @Configuration
 @EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
@@ -51,11 +53,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/signup").permitAll()
-                        .requestMatchers("/user")
-                        .hasRole("USER")
+//                        .requestMatchers("/user")
+//                        .hasRole("USER")
                         // .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/admin")
-                        .hasRole("ADMIN")
+//                        .requestMatchers("/admin")
+//                        .hasRole("ADMIN")
                         // .access(new WebExpressionAuthorizationManager("hasRole('ADMIN') AND hasAuthority('WRITE')"))
                         .anyRequest().authenticated())
 //                .formLogin(form -> form
@@ -68,7 +70,7 @@ public class SecurityConfig {
                 .addFilterBefore(emailPasswordAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
-                    e.authenticationEntryPoint(new Http401Handler());
+                    e.authenticationEntryPoint(new Http401Handler(objectMapper));
                 })
                 .rememberMe(rm -> rm.rememberMeParameter("remember")
                         .alwaysRemember(false)
