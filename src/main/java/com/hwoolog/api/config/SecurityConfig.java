@@ -38,6 +38,9 @@ public class SecurityConfig {
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/"))
+                .rememberMe(rm -> rm.rememberMeParameter("remember")
+                        .alwaysRemember(false)
+                        .tokenValiditySeconds(60 * 60 * 24 * 30))
                 .userDetailsService(userDetailsService())
                 .csrf(csrf -> csrf.disable())
                 .build();
