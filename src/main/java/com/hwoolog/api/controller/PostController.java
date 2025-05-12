@@ -1,5 +1,6 @@
 package com.hwoolog.api.controller;
 
+import com.hwoolog.api.config.UserPrincipal;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
 import com.hwoolog.api.request.PostSerch;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,10 +24,10 @@ public class PostController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/posts")
-    public void posts(@RequestBody @Valid PostCreate request
+    public void posts(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody @Valid PostCreate request
                       // , BindingResult result
     ) throws Exception {
-        postService.write(request);
+        postService.write(userPrincipal.getUserId(), request);
     }
 
     /**
@@ -55,7 +57,9 @@ public class PostController {
         postService.edit(postId, request);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // @PreAuthorize("hasRole('ROLE_ADMIN') && hasPermission(#postId, 'POST', 'DELETE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') && hasPermission(#postId, 'POST', 'DELETE')")
     @DeleteMapping("/posts/{postId}")
     public void delete(@PathVariable Long postId) {
         postService.delete(postId);

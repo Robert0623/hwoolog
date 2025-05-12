@@ -7,3 +7,8 @@ Content-Type: application/json
   "title": "foo",
   "content": "bar"
 }
+
+### 게시글 삭제
+
+DELETE http://localhost:8080/posts/2
+Content-Type: application/json

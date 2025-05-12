@@ -3,7 +3,9 @@ package com.hwoolog.api.service;
 import com.hwoolog.api.domain.Post;
 import com.hwoolog.api.domain.PostEditor;
 import com.hwoolog.api.exception.PostNotFound;
+import com.hwoolog.api.exception.UserNotFound;
 import com.hwoolog.api.repository.PostRepository;
+import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
 import com.hwoolog.api.request.PostSerch;
@@ -21,11 +23,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    public void write(PostCreate postCreate) {
+    public void write(Long userId, PostCreate postCreate) {
+        var user = userRepository.findById(userId)
+                .orElseThrow(UserNotFound::new);
+
         // postCreate(Dto) -> Entity
         Post post = Post.builder()
+                .user(user)
                 .title(postCreate.getTitle())
                 .content(postCreate.getContent())
                 .build();
