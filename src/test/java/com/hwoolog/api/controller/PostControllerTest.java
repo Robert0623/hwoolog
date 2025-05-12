@@ -1,17 +1,19 @@
 package com.hwoolog.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hwoolog.api.config.HwoologMockUser;
 import com.hwoolog.api.domain.Post;
+import com.hwoolog.api.domain.User;
 import com.hwoolog.api.repository.PostRepository;
+import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -23,7 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // @WebMvcTest
 @AutoConfigureMockMvc
@@ -39,14 +42,19 @@ class PostControllerTest {
     @Autowired
     private PostRepository postRepository;
 
-    @BeforeEach
+    @Autowired
+    private UserRepository userRepository;
+
+    @AfterEach
     void clean() {
         postRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     @DisplayName("글 작성 요청 시 title 값은 필수다.")
-    @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    // @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    @HwoologMockUser
     void test2() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
@@ -70,7 +78,8 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 작성")
-    @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    // @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    @HwoologMockUser
     void test3() throws Exception {
         // before -> @BeforeEach
 
@@ -103,7 +112,16 @@ class PostControllerTest {
     @DisplayName("글 1개 조회")
     void test4() throws Exception {
         // given
+        User user = User.builder()
+                .name("hwoo")
+                .email("aaa@aaa.com")
+                .password("1234")
+                .build();
+
+        userRepository.save(user);
+
         Post post = Post.builder()
+                .user(user)
                 // .title("foo")
                 .title("123456789012345")
                 .content("bar")
@@ -125,8 +143,17 @@ class PostControllerTest {
     @DisplayName("글 1페이지 조회")
     void test5() throws Exception {
         // given
+        User user = User.builder()
+                .name("hwoo")
+                .email("aaa@aaa.com")
+                .password("1234")
+                .build();
+
+        userRepository.save(user);
+
         List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder()
+                        .user(user)
                         .title("foo" + i)
                         .content("bar" + i)
                         .build())
@@ -159,8 +186,17 @@ class PostControllerTest {
     @DisplayName("페이지를 0으로 요청하면 첫 페이지를 가져온다.")
     void test6() throws Exception {
         // given
+        User user = User.builder()
+                .name("hwoo")
+                .email("aaa@aaa.com")
+                .password("1234")
+                .build();
+
+        userRepository.save(user);
+
         List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder()
+                        .user(user)
                         .title("foo" + i)
                         .content("bar" + i)
                         .build())
@@ -190,13 +226,17 @@ class PostControllerTest {
 
     @Test
     @DisplayName("글 제목 수정")
-    @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    // @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    @HwoologMockUser
     void test7() throws Exception {
         // given
+        User user = userRepository.findAll().get(0);
+
         Post post = Post.builder()
-                        .title("foo")
-                        .content("bar")
-                        .build();
+                .user(user)
+                .title("foo")
+                .content("bar")
+                .build();
         postRepository.save(post);
 
         PostEdit postEdit = PostEdit.builder()
@@ -206,18 +246,22 @@ class PostControllerTest {
 
         // expected (when + then)
         mockMvc.perform(patch("/posts/{postId}", post.getId()) // PATCH /posts/{postsId}
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(postEdit)))
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
     @DisplayName("글 내용 삭제")
-    @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    // @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    @HwoologMockUser
     void test8() throws Exception {
         // given
+        User user = userRepository.findAll().get(0);
+
         Post post = Post.builder()
+                .user(user)
                 .title("foo")
                 .content("bar")
                 .build();
@@ -247,7 +291,8 @@ class PostControllerTest {
 
     @Test
     @DisplayName("존재하지 않는 게시글 수정")
-    @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    // @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    @HwoologMockUser
     void test10() throws Exception {
         // given
         PostEdit postEdit = PostEdit.builder()

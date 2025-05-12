@@ -1,9 +1,12 @@
 package com.hwoolog.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hwoolog.api.config.HwoologMockUser;
 import com.hwoolog.api.domain.Post;
 import com.hwoolog.api.repository.PostRepository;
+import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.PostCreate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -39,7 +41,16 @@ public class PostControllerDocTest {
     private PostRepository postRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     ObjectMapper objectMapper;
+
+    @AfterEach
+    void clean() {
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("글 단건 조회 테스트")
@@ -70,7 +81,8 @@ public class PostControllerDocTest {
 
     @Test
     @DisplayName("글 등록")
-    @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    // @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
+    @HwoologMockUser
     void test2() throws Exception {
         // given
         PostCreate request = PostCreate.builder()

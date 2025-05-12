@@ -1,8 +1,10 @@
 package com.hwoolog.api.service;
 
 import com.hwoolog.api.domain.Post;
+import com.hwoolog.api.domain.User;
 import com.hwoolog.api.exception.PostNotFound;
 import com.hwoolog.api.repository.PostRepository;
+import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.request.PostCreate;
 import com.hwoolog.api.request.PostEdit;
 import com.hwoolog.api.request.PostSerch;
@@ -28,22 +30,33 @@ class PostServiceTest {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void clean() {
         postRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     @DisplayName("글 작성")
     void test1() {
         // given
+        var user = User.builder()
+                .name("hwoo")
+                .email("aaa@aaa.com")
+                .password("1234")
+                .build();
+        userRepository.save(user);
+
         PostCreate postCreate = PostCreate.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .build();
 
         // when
-        postService.write(postCreate);
+        postService.write(user.getId(), postCreate);
 
         // then
         assertEquals(1L, postRepository.count());
