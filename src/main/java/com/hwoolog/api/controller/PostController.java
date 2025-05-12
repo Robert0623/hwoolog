@@ -1,9 +1,9 @@
 package com.hwoolog.api.controller;
 
 import com.hwoolog.api.config.UserPrincipal;
-import com.hwoolog.api.request.PostCreate;
-import com.hwoolog.api.request.PostEdit;
-import com.hwoolog.api.request.PostSerch;
+import com.hwoolog.api.request.post.PostCreate;
+import com.hwoolog.api.request.post.PostEdit;
+import com.hwoolog.api.request.post.PostSerch;
 import com.hwoolog.api.response.PostResponse;
 import com.hwoolog.api.service.PostService;
 import jakarta.validation.Valid;

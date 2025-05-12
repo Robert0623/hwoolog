@@ -1,7 +1,7 @@
-package com.hwoolog.api.repository;
+package com.hwoolog.api.repository.post;
 
 import com.hwoolog.api.domain.Post;
-import com.hwoolog.api.request.PostSerch;
+import com.hwoolog.api.request.post.PostSerch;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

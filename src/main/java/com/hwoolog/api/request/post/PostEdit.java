@@ -1,4 +1,4 @@
-package com.hwoolog.api.request;
+package com.hwoolog.api.request.post;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.hwoolog.api.config;
 
 import com.hwoolog.api.exception.PostNotFound;
-import com.hwoolog.api.repository.PostRepository;
+import com.hwoolog.api.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;

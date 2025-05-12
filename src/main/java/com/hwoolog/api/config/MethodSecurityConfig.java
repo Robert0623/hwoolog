@@ -1,6 +1,6 @@
 package com.hwoolog.api.config;
 
-import com.hwoolog.api.repository.PostRepository;
+import com.hwoolog.api.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
