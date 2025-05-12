@@ -25,8 +25,6 @@ public class PostController {
     public void posts(@RequestBody @Valid PostCreate request
                       // , BindingResult result
     ) throws Exception {
-
-        request.validate();
         postService.write(request);
     }
 

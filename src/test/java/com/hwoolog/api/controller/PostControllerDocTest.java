@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -69,6 +70,7 @@ public class PostControllerDocTest {
 
     @Test
     @DisplayName("글 등록")
+    @WithMockUser(username = "aaa@aaa.com", roles = {"ADMIN"})
     void test2() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
