@@ -2,10 +2,13 @@ package com.hwoolog.api.service;
 
 import com.hwoolog.api.domain.Comment;
 import com.hwoolog.api.domain.Post;
+import com.hwoolog.api.exception.CommentNofFount;
+import com.hwoolog.api.exception.InvalidPassword;
 import com.hwoolog.api.exception.PostNotFound;
 import com.hwoolog.api.repository.comment.CommentRepository;
 import com.hwoolog.api.repository.post.PostRepository;
 import com.hwoolog.api.request.comment.CommentCreate;
+import com.hwoolog.api.request.comment.CommentDelete;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,5 +36,17 @@ public class CommentService {
                 .build();
 
         post.addComment(comment);
+    }
+
+    public void delete(Long commentId, CommentDelete request) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(CommentNofFount::new);
+
+        String encryptedPassword = comment.getPassword();
+        if (!passwordEncoder.matches(request.getPassword(), encryptedPassword)) {
+            throw new InvalidPassword();
+        }
+
+        commentRepository.delete(comment);
     }
 }

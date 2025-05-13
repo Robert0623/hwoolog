@@ -8,6 +8,7 @@ import com.hwoolog.api.repository.UserRepository;
 import com.hwoolog.api.repository.comment.CommentRepository;
 import com.hwoolog.api.repository.post.PostRepository;
 import com.hwoolog.api.request.comment.CommentCreate;
+import com.hwoolog.api.request.comment.CommentDelete;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -95,5 +96,48 @@ class CommentControllerTest {
         assertNotEquals("123456", savedComment.getPassword());
         assertTrue(passwordEncoder.matches("123456", savedComment.getPassword()));
         assertEquals("0123456789", savedComment.getContent());
+    }
+
+    @Test
+    @DisplayName("댓글 삭제")
+    void test2() throws Exception {
+        // given
+        User user = User.builder()
+                .name("hwoo")
+                .email("aaa@aaa.com")
+                .password("1234")
+                .build();
+        userRepository.save(user);
+
+        Post post = Post.builder()
+                .user(user)
+                .title("foo")
+                .content("bar")
+                .build();
+
+        postRepository.save(post);
+        Long postId = post.getId();
+
+        String encryptedPassword = passwordEncoder.encode("123456");
+        Comment comment = Comment.builder()
+                .author("hwoo2")
+                .password(encryptedPassword)
+                .content("1234567890")
+                .build();
+        comment.setPost(post);
+        commentRepository.save(comment);
+
+        CommentDelete request = new CommentDelete("123456");
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(post("/comments/{commentId}/delete", comment.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+
     }
 }

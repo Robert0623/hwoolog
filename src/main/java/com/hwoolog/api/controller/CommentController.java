@@ -1,14 +1,12 @@
 package com.hwoolog.api.controller;
 
 import com.hwoolog.api.request.comment.CommentCreate;
+import com.hwoolog.api.request.comment.CommentDelete;
 import com.hwoolog.api.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -20,5 +18,11 @@ public class CommentController {
     @PostMapping("/posts/{postId}/comments")
     public void write(@PathVariable Long postId, @RequestBody @Valid CommentCreate request) {
         commentService.write(postId, request);
+    }
+
+    // @DeleteMapping("/comments/{commentId}")
+    @PostMapping("/comments/{commentId}/delete")
+    public void delete(@PathVariable Long commentId, @RequestBody @Valid CommentDelete request) {
+        commentService.delete(commentId, request);
     }
 }
