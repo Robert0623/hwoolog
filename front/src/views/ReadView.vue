@@ -1,86 +1,108 @@
 <script setup lang="ts">
-import axios from "axios";
-import {onMounted, ref} from "vue";
-import {useRouter} from "vue-router";
+import axios from 'axios'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import Comments from '@/components/Comments.vue'
 
-const router = useRouter();
+const router = useRouter()
 
 const props = defineProps({
   postId: {
     type: [Number, String],
     required: true,
   },
-});
+})
 
 const post = ref({
   id: 0,
   title: '',
   content: '',
-});
+})
 
 const moveToEdit = () => {
-  router.push({name: 'edit'});
-};
+  router.push({ name: 'edit' })
+}
 
 onMounted(() => {
   axios.get(`/api/posts/${props.postId}`).then((response) => {
-    post.value = response.data;
-  });
+    post.value = response.data
+  })
 })
-
 </script>
 
 <template>
   <el-row>
     <el-col>
-      <h2 class="title">{{post.title}}</h2>
+      <div class="title">제목입니다.</div>
+    </el-col>
+  </el-row>
 
-      <div class="sub d-flex">
-        <div class="category">개발</div>
-        <div class="regDate">2025-04-27 23:59:59</div>
+  <el-row>
+    <el-col :span="10" :offset="7">
+      <div class="title">
+        <div class="regDate">Posted on 2025-05-13</div>
       </div>
     </el-col>
   </el-row>
 
-  <el-row class="mt-3">
+  <el-row>
     <el-col>
-      <div class="content">{{post.content}}</div>
-    </el-col>
-  </el-row>
+      <div class="content">내용입니다.</div>
 
-  <el-row class="mt-3">
-    <el-col>
-      <div class="d-flex justify-content-end">
-        <el-button type="warning" @click="moveToEdit()">수정</el-button>
+      <div class="footer">
+        <div class="edit">수정</div>
+        <div class="delete">삭제</div>
       </div>
     </el-col>
   </el-row>
 
+  <el-row class="comments"> </el-row>
+  <el-col>
+    <Comments />
+  </el-col>
 </template>
 
 <style scoped lang="scss">
-  .title {
-    font-size: 1.6rem;
-    font-weight: 600;
-    colof: #383838;
-    margin: 0;
-  }
+.title {
+  font-size: 1.8rem;
+  font-weight: 400;
+  text-align: center;
+}
 
-  .content {
-    font-size: 0.85rem;
-    margin-top: 12px;
-    color: #616161;
-    white-space: break-spaces;
-    line-height: 1.5;
-  }
+.regDate {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 300;
+}
 
-  .sub {
-    margin-top: 10px;
-    font-size: 0.78rem;
+.content {
+  margin-top: 1.88rem;
+  font-weight: 300;
 
-    .regDate {
-      margin-left: 10px;
-      color: #6b6b6b;
-    }
+  word-break: break-all;
+  white-space: break-spaces;
+  line-height: 1.4;
+  min-height: 5rem;
+}
+
+hr {
+  border-color: #f9f9f9;
+  margin: 1.2rem 0;
+}
+
+.footer {
+  margin-top: 1rem;
+  display: flex;
+  font-size: 0.78rem;
+  justify-content: flex-end;
+  gap: 0.8rem;
+
+  .delete {
+    color: red;
   }
+}
+
+.comments {
+  margin-top: 4.8rem;
+}
 </style>

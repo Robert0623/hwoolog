@@ -1,42 +1,17 @@
-<script setup lang="ts">
-
-import {ref} from "vue";
-
-import axios from 'axios';
-import {useRouter} from "vue-router";
-
-const title = ref("")
-const content = ref("")
-
-const router = useRouter()
-
-const write = function () {
-  axios.post('/api/posts', {
-    title: title.value,
-    content: content.value,
-  })
-    .then(() => {
-      router.replace({name: 'home'});
-    });
-};
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div>
-    <el-input v-model="title" type="text" placeholder="제목을 입력해주세요"/>
-  </div>
+  <el-form label-position="top">
+    <el-form-item label="제목">
+      <el-input size="large" placeholder="제목을 입력해주세요." />
+    </el-form-item>
 
-  <div>
-    <el-input v-model="content" type="textarea" name="" id="" cols="30" rows="15"/>
-  </div>
+    <el-form-item label="내용">
+      <el-input type="textarea" rows="15" alt="내용" placeholder="내용을 입력해주세요." />
+    </el-form-item>
 
-  <div class="mt-2">
-    <div class="d-flex justify-content-end">
-      <el-button type="primary" @click="write()">글 작성완료</el-button>
-    </div>
-  </div>
+    <el-form-item>
+      <el-button type="primary" style="width: 100%">등록완료</el-button>
+    </el-form-item>
+  </el-form>
 </template>
-
-<style>
-
-</style>
